@@ -4,7 +4,7 @@ device: 'cuda'
 output_path: 'tokenflow-results'
 
 # data
-data_path: 'wolf-part'
+data_path: 'data/wolf'
 latents_path: 'latents' # should be the same as 'save_dir' arg used in preprocess
 n_inversion_steps: 100 # for retrieving the latents of the inversion
 n_frames: 40

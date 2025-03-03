@@ -1,10 +1,12 @@
 # general
 seed: 1
 device: 'cuda'
-output_path: 'outputs/tokenflow-results'
+output_path: 'tokenflow-results'
+tgt_name: 'object_multiple'
 
 # data
-data_path: 'data/woman-running'
+ori_data_pth: "samples/loveu/eiffel-flyover"  # bfe resize
+data_path: 'data/eiffel-flyover'
 latents_path: 'latents' # should be the same as 'save_dir' arg used in preprocess
 n_inversion_steps: 500 # for retrieving the latents of the inversion
 n_frames: 40
@@ -13,7 +15,7 @@ n_frames: 40
 sd_version: '2.1'
 guidance_scale: 7.5
 n_timesteps: 50
-prompt: "a marble sculpture of a woman running, Venus de Milo"
+prompt: "Drone flyover of the Canadian National Tower, surrounded by martian desert." 
 negative_prompt: "ugly, blurry, low res, unrealistic, unaesthetic"
 batch_size: 8
 

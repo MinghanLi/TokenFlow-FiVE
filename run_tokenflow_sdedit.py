@@ -281,5 +281,6 @@ if __name__ == '__main__':
     with open(os.path.join(config["output_path"], "config.yaml"), "w") as f:
         yaml.dump(config, f)
 
-    assert os.path.exists(config["data_path"]), "Data path does not exist"
+    data_path = config["data_path"]
+    assert os.path.exists(config["data_path"]), f"Data path does not exist: {data_path}"
     run(config)

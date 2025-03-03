@@ -1,0 +1,200 @@
+[
+  {
+    "video_name": "car-turn16",
+    "source_prompt": "A silver compact off-road vehicle drives on a curved road in a forest, moving from afar toward the camera.",
+    "target_prompt": "A silver compact off-road vehicle drives on a curved road in an arid desert, moving from afar toward the camera.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "bus",
+    "source_prompt": "A modern city bus driving through an urban street intersection, captured from an elevated perspective.",
+    "target_prompt": "A small car (sedan) driving through an urban street intersection, captured from an elevated perspective.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "wolf",
+    "source_prompt": "A gray and white wolf gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "target_prompt": "A cat gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "wolf",
+    "source_prompt": "A gray and white wolf gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "target_prompt": "A fox gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "wolf",
+    "source_prompt": "A gray and white wolf gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "target_prompt": "A brown bear gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "eiffel-flyover",
+    "source_prompt": "Drone flyover of the Eiffel Tower in front of the city's classic architecture and green spaces, sunset.",
+    "target_prompt": "Drone flyover of the Space Needle in front of the city's classic architecture and green spaces, 3D animation style.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "cows",
+    "source_prompt": "A brown and white cow stands on the green grass.",
+    "target_prompt": "A zebra stands on the green grass.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "blackswan",
+    "source_prompt": "A black swan with a red beak swimming in a river near a wall and bushes. Amazing quality, masterpiece.",
+    "target_prompt": "A swan in Swarovski crystal style swimming in a river near a wall and bushes. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "aircraft-landing",
+    "source_prompt": "A Delta Air Lines is landing or taking off, with landing gear extended. The aircraft features Delta\u2019s white, blue, and red livery, with its name and logo on the fuselage. The background shows a tree line and clear sky.",
+    "target_prompt": "A Delta Air Lines with brightly colored cyberpunk is landing or taking off, with landing gear extended. The aircraft features Delta\u2019s white, blue, and red livery, with its name and logo on the fuselage. The background shows a bustling cityscape.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "locomotive",
+    "source_prompt": "A locomotive is moving along the tracks in an autumn forest, with trees flanking both sides. Amazing quality, masterpiece.",
+    "target_prompt": "A sports car is driving along the tracks in an autumn forest, with trees flanking both sides. Amazing quality, masterpiece,",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "wolf",
+    "source_prompt": "A gray and white wolf gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "target_prompt": "A fox gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "aircraft-landing",
+    "source_prompt": "A Delta Air Lines is landing or taking off, with landing gear extended. The aircraft features Delta\u2019s white, blue, and red livery, with its name and logo on the fuselage. The background shows a tree line and clear sky.",
+    "target_prompt": "A Delta Air Lines is landing or taking off, with landing gear extended. The aircraft features Delta\u2019s white, blue, and red livery, with its name and logo on the fuselage. The background shows a tree line and clear sky. sepia toned, faded brown color.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "bear",
+    "source_prompt": "A brown bear is slowly walking through a rocky enclosure, possibly in a zoo or wildlife sanctuary. Amazing quality, masterpiece.",
+    "target_prompt": "A giant panda is slowly walking through a rocky enclosure, possibly in a zoo or wildlife sanctuary. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "locomotive",
+    "source_prompt": "A locomotive is moving along the tracks in an autumn forest, with trees flanking both sides. Amazing quality, masterpiece.",
+    "target_prompt": "A motorbike is moving in an autumn forest, with trees flanking both sides. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "car-turn16",
+    "source_prompt": "A silver compact off-road vehicle navigates a winding forest road, framed by towering trees and distant mountains. It approaches from afar, gradually moving toward the camera and easing into a right turn.",
+    "target_prompt": "A Disney-style cartoon sports car navigates a winding forest road, framed by towering trees and distant mountains. It approaches from afar, gradually moving toward the camera and easing into a right turn.",
+    "negative_prompt": "static object, without motion, worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "woman-running",
+    "source_prompt": "A woman clad in a pink blouse and a brown vest is captured in a mid-shot as she runs through the park, with a river gracing the left side of the image. Amazing quality, masterpiece.",
+    "target_prompt": "A woman marble sculpture (Venus de Milo) is captured in a mid-shot as she runs through the park, with a river gracing the left side of the image. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "eiffel-flyover",
+    "source_prompt": "Drone flyover of the Eiffel Tower in front of the city's classic architecture and green spaces, sunset.",
+    "target_prompt": "Drone flyover of the Eiffel Tower in front of a large fireworks display.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "bear",
+    "source_prompt": "A brown bear is slowly walking through a rocky enclosure, possibly in a zoo or wildlife sanctuary. Amazing quality, masterpiece.",
+    "target_prompt": "A wolf is slowly walking through a rocky enclosure, possibly in a zoo or wildlife sanctuary. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "locomotive",
+    "source_prompt": "A locomotive is moving along the tracks in an autumn forest, with trees flanking both sides. Amazing quality, masterpiece.",
+    "target_prompt": "A sports car is moving along the tracks in a very vey heavy snowy forest, with trees flanking both sides. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "camel",
+    "source_prompt": "A camel moves slowly across a zoo field, with a wooden fence and roof on the right, against a backdrop of blue sky and green plants.",
+    "target_prompt": "A giraffe moves slowly across a zoo field, with a wooden fence and roof on the right, against a backdrop of blue sky and green plants.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "woman-running",
+    "source_prompt": "A woman dressed in a pink blouse and a brown vest is captured in a mid-shot as she runs through the park, with a river gracing the left side of the image. Amazing quality, masterpiece.",
+    "target_prompt": "A woman wearing glasses, dressed in a pink blouse and a brown vest, is captured in a mid-shot as she runs through the park, with a river gracing the left side of the image. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "car-turn16",
+    "source_prompt": "A silver compact off-road vehicle drives on a curved road in a forest, moving from afar toward the camera.",
+    "target_prompt": "An adult asian elephant runs on a curved road in a forest, moving from afar toward the camera.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "cows",
+    "source_prompt": "A brown and white cow stands on the green grass.",
+    "target_prompt": "A brown and black horse stands on the green grass.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "blackswan",
+    "source_prompt": "A black swan with a red beak swimming in a river near a wall and bushes. Amazing quality, masterpiece.",
+    "target_prompt": "A pink flamingo swimming in a river near a wall and bushes. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "locomotive",
+    "source_prompt": "A locomotive is moving along the tracks in an autumn forest, with trees flanking both sides. Amazing quality, masterpiece.",
+    "target_prompt": "A vivid airplane is moving along the tracks in an autumn forest, with trees flanking both sides. Amazing quality, masterpiece,",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "eiffel-flyover",
+    "source_prompt": "Drone flyover of the Eiffel Tower in front of the city's classic architecture and green spaces, sunset.",
+    "target_prompt": "Drone flyover of the Eiffel Tower in front of the city's classic architecture and green spaces, sunset. 3D animation style.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "eiffel-flyover",
+    "source_prompt": "Drone flyover of the Eiffel Tower in front of the city's classic architecture and green spaces, sunset.",
+    "target_prompt": "Drone flyover of the Canadian National Tower, surrounded by martian desert.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "car-turn16",
+    "source_prompt": "A silver compact off-road vehicle drives on a curved road in a forest, moving from afar toward the camera.",
+    "target_prompt": "A silver spaceship drives on a curved road in a forest, moving from afar toward the camera.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "bear",
+    "source_prompt": "A brown bear is slowly walking through a rocky enclosure, possibly in a zoo or wildlife sanctuary. Amazing quality, masterpiece.",
+    "target_prompt": "A lion is slowly walking through a rocky enclosure, possibly in a zoo or wildlife sanctuary. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "aircraft-landing",
+    "source_prompt": "A Delta Air Lines is landing or taking off, with landing gear extended. The aircraft features Delta\u2019s white, blue, and red livery, with its name and logo on the fuselage. The background shows a tree line and clear sky.",
+    "target_prompt": "A Delta Air Lines with brightly colored cyberpunk is landing or taking off, with landing gear extended. The aircraft features Delta\u2019s white, blue, and red livery, with its name and logo on the fuselage. The background shows a tree line and clear sky.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "aircraft-landing",
+    "source_prompt": "A Delta Air Lines is landing or taking off, with landing gear extended. The aircraft features Delta\u2019s white, blue, and red livery, with its name and logo on the fuselage. The background shows a tree line and clear sky.",
+    "target_prompt": "A Delta Air Lines is landing or taking off, with landing gear extended. The aircraft features Delta\u2019s white, blue, and red livery, with its name and logo on the fuselage. The background shows a tree line and cloudy sky.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "wolf",
+    "source_prompt": "A gray and white wolf gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "target_prompt": "A shiny silver robotic wolf gazes at the camera, occasionally turning its head slightly to scout from side to side, with the wolf occupying the majority of the frame. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  },
+  {
+    "video_name": "blackswan",
+    "source_prompt": "A black swan with a red beak swimming in a river near a wall and bushes. Amazing quality, masterpiece.",
+    "target_prompt": "A black duck with a red beak swimming in a river near a wall and bushes. Amazing quality, masterpiece.",
+    "negative_prompt": "worst quality, low quality, blurry, absolute black, absolute white, low res, extra limbs, extra digits, misplaced objects, mutated anatomy, monochrome, horror"
+  }
+]

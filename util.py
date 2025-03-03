@@ -5,7 +5,7 @@ import yaml
 import math
 
 import torchvision.transforms as T
-from torchvision.io import read_video,write_video
+from torchvision.io import read_video, write_video
 import os
 import random
 import numpy as np
@@ -15,18 +15,30 @@ from kornia.geometry.transform import remap
 from kornia.utils.grid import create_meshgrid
 import cv2
 
+
 def save_video_frames(video_path, img_size=(512,512)):
-    video, _, _ = read_video(video_path, output_format="TCHW")
-    # rotate video -90 degree if video is .mov format. this is a weird bug in torchvision
-    if video_path.endswith('.mov'):
-        video = T.functional.rotate(video, -90)
-    video_name = Path(video_path).stem
-    os.makedirs(f'data/{video_name}', exist_ok=True)
-    for i in range(len(video)):
-        ind = str(i).zfill(5)
-        image = T.ToPILImage()(video[i])
-        image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
-        image_resized.save(f'data/{video_name}/{ind}.png')
+    if os.path.isdir(video_path):
+        video_name = video_path.split('/')[-1]
+        Path(f'data/{video_name}').mkdir(exist_ok=True)
+        for filename in os.listdir(video_path):
+            if not (filename.endswith('.jpg') or filename.endswith('.png')):
+                continue
+
+            image = Image.open(os.path.join(video_path, filename))
+            image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
+            image_resized.save(f'data/{video_name}/{filename}')
+    else:
+        video, _, _ = read_video(video_path, output_format="TCHW")
+        # rotate video -90 degree if video is .mov format. this is a weird bug in torchvision
+        if video_path.endswith('.mov'):
+            video = T.functional.rotate(video, -90)
+        video_name = Path(video_path).stem
+        os.makedirs(f'data/{video_name}', exist_ok=True)
+        for i in range(len(video)):
+            ind = str(i).zfill(5)
+            image = T.ToPILImage()(video[i])
+            image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
+            image_resized.save(f'data/{video_name}/{ind}.png')
 
 def add_dict_to_yaml_file(file_path, key, value):
     data = {}
@@ -85,7 +97,7 @@ def load_imgs(data_path, n_frames, device='cuda', pil=False):
     return torch.cat(imgs).to(device)
 
 
-def save_video(raw_frames, save_path, fps=10):
+def save_video_old(raw_frames, save_path, fps=10, img_size=(512,512)):
     video_codec = "libx264"
     video_options = {
         "crf": "18",  # Constant Rate Factor (lower value = higher quality, 18 is a good balance)
@@ -94,6 +106,28 @@ def save_video(raw_frames, save_path, fps=10):
 
     frames = (raw_frames * 255).to(torch.uint8).cpu().permute(0, 2, 3, 1)
     write_video(save_path, frames, fps=fps, video_codec=video_codec, options=video_options)
+
+
+def save_video(raw_frames, save_path, fps=10, img_size=(512, 512)):
+    video_codec = "libx264"
+    video_options = {
+        "crf": "18",  # Constant Rate Factor (lower value = higher quality, 18 is a good balance)
+        "preset": "slow",  # Encoding preset
+    }
+
+    resized_frames = []
+    for frame in raw_frames:
+        # Convert to PIL Image for resizing
+        pil_frame = T.ToPILImage()(frame)
+        resized_frame = pil_frame.resize((img_size),  resample=Image.Resampling.LANCZOS)
+        # Convert back to tensor
+        resized_frame = T.ToTensor()(resized_frame)
+        resized_frames.append(resized_frame)
+    
+    frames = torch.stack(resized_frames)
+    frames = (frames * 255).to(torch.uint8).cpu().permute(0, 2, 3, 1)
+    write_video(save_path, frames, fps=fps, video_codec=video_codec, options=video_options)
+
 
 
 def seed_everything(seed):

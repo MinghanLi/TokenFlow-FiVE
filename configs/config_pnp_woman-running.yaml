@@ -1,9 +1,11 @@
 # general
 seed: 1
 device: 'cuda'
-output_path: 'outputs/tokenflow-results'
+output_path: 'tokenflow-results'
+tgt_name: 'sculpture'
 
 # data
+ori_data_pth: "data/woman-running"  # bfe resize
 data_path: 'data/woman-running'
 latents_path: 'latents' # should be the same as 'save_dir' arg used in preprocess
 n_inversion_steps: 500 # for retrieving the latents of the inversion

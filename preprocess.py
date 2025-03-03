@@ -4,6 +4,8 @@ from diffusers import AutoencoderKL, UNet2DConditionModel, DDIMScheduler
 logging.set_verbosity_error()
 
 import os
+import cv2
+import json
 from tqdm import tqdm, trange
 import torch
 import torch.nn as nn
@@ -182,10 +184,43 @@ class Preprocess(nn.Module):
         return latents
 
     def get_data(self, frames_path, n_frames):
+        # Check if the frames directory is empty
+        if not os.listdir(frames_path):
+            print(f"No files in {frames_path}. Extracting frames from {frames_path}.mp4 ...")
+
+            # Open the video file using OpenCV
+            cap = cv2.VideoCapture(frames_path+'.mp4')
+            
+            if not cap.isOpened():
+                print(f"Error: Could not open video {frames_path}.mp4")
+                exit()
+
+            frame_count = 0
+            while True:
+                ret, frame = cap.read()
+                
+                # If there are no more frames, exit the loop
+                if not ret:
+                    break
+
+                # Save each frame as an image file in the frames directory
+                frame_filename = os.path.join(frames_path, f'frame_{frame_count:05d}.png')
+                cv2.imwrite(frame_filename, frame)
+                
+                frame_count += 1
+
+            # Release the video capture object
+            cap.release()
+            print(f"Extraction complete. {frame_count} frames saved to {frames_path}.")
+
         # load frames
-        paths =  [f"{frames_path}/%05d.png" % i for i in range(n_frames)]
-        if not os.path.exists(paths[0]):
-            paths = [f"{frames_path}/%05d.jpg" % i for i in range(n_frames)]
+        paths = [
+            os.path.join(frames_path, filename) 
+            for filename in sorted(os.listdir(frames_path))[:n_frames]
+        ]
+        # paths =  [f"{frames_path}/%05d.png" % i for i in range(n_frames)]
+        # if not os.path.exists(paths[0]):
+        #     paths = [f"{frames_path}/%05d.jpg" % i for i in range(n_frames)]
         self.paths = paths
         frames = [Image.open(path).convert('RGB') for path in paths]
         if frames[0].size[0] == frames[0].size[1]:
@@ -232,6 +267,7 @@ class Preprocess(nn.Module):
     @torch.no_grad()
     def ddim_sample(self, x, cond, batch_size):
         timesteps = self.scheduler.timesteps
+
         for i, t in enumerate(tqdm(timesteps)):
             for b in range(0, x.shape[0], batch_size):
                 x_batch = x[b:b + batch_size]
@@ -302,6 +338,11 @@ def prep(opt):
 
     seed_everything(1)
 
+    if os.path.isdir(opt.data_path):
+        opt.n_frames = sum([
+            filename.endswith('.png') or filename.endswith('.jpg') 
+            for filename in os.listdir(opt.data_path)
+        ])
     save_path = os.path.join(opt.save_dir,
                              f'sd_{opt.sd_version}',
                              Path(opt.data_path).stem,
@@ -333,6 +374,8 @@ def prep(opt):
 if __name__ == "__main__":
     device = 'cuda'
     parser = argparse.ArgumentParser()
+    parser.add_argument('--data_dir', type=str,
+                        default='data') 
     parser.add_argument('--data_path', type=str,
                         default='data/woman-running.mp4') 
     parser.add_argument('--H', type=int, default=512, 
@@ -347,8 +390,36 @@ if __name__ == "__main__":
     parser.add_argument('--save_steps', type=int, default=50)
     parser.add_argument('--n_frames', type=int, default=40)
     parser.add_argument('--inversion_prompt', type=str, default='a woman running')
+    # FiVE dataset
+    parser.add_argument("--dataset_json", type=str, default=None, help="configs/dataset.json")
     opt = parser.parse_args()
-    video_path = opt.data_path
-    save_video_frames(video_path, img_size=(opt.W, opt.H))
-    opt.data_path = os.path.join('data', Path(video_path).stem)
-    prep(opt)
+
+    if opt.dataset_json is None:
+        video_path = opt.data_path
+        save_video_frames(video_path, img_size=(opt.W, opt.H))
+        opt.data_path = os.path.join('data', Path(video_path).stem)
+
+        prep(opt)
+    
+    else:
+        with open(opt.dataset_json, 'r') as json_file:
+            data = json.load(json_file)
+
+        processed_video_names = []
+
+        num_videos = len(data)
+        data_dir = opt.data_dir
+        for vid, entry in enumerate(data):
+            if entry['video_name'] in processed_video_names:
+                continue 
+
+            print(f"Processing {vid}/{num_videos} video: {entry['video_name']} ...")
+
+            video_path = os.path.join(opt.data_dir, entry['video_name'])
+            save_video_frames(video_path, img_size=(opt.W, opt.H))
+            opt.data_path = os.path.join('data', Path(video_path).stem)
+            opt.inversion_prompt = entry['source_prompt']
+
+            prep(opt)
+
+            processed_video_names.append(entry['video_name'])
