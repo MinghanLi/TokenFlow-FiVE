@@ -137,12 +137,13 @@ class TokenFlow(nn.Module):
         # Tokenize text and get embeddings
         text_input = self.tokenizer(prompt, padding='max_length', max_length=self.tokenizer.model_max_length,
                                     truncation=True, return_tensors='pt')
+        text_input.input_ids = text_input.input_ids[..., :77]
         text_embeddings = self.text_encoder(text_input.input_ids.to(self.device))[0]
 
         # Do the same for unconditional embeddings
         uncond_input = self.tokenizer(negative_prompt, padding='max_length', max_length=self.tokenizer.model_max_length,
                                       return_tensors='pt')
-
+        uncond_input.input_ids = uncond_input.input_ids[..., :77]
         uncond_embeddings = self.text_encoder(uncond_input.input_ids.to(self.device))[0]
 
         # Cat for final embeddings
@@ -375,4 +376,5 @@ if __name__ == '__main__':
             assert os.path.exists(config["data_path"]), f'Data path {config["data_path"]} does not exist'
             with open(os.path.join(config["output_path"], "config.yaml"), "w") as f:
                 yaml.dump(config, f)
+
             run(config)

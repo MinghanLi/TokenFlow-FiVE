@@ -28,4 +28,6 @@ while true; do
         --data_resize_dir data_FiVE_resize \
         --output_dir outputs_FiVE \
         --dataset_json data_FiVE/edit_prompt/edit4_FiVE.json 
+
+    sleep 600
 done
