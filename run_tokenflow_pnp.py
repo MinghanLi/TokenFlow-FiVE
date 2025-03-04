@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 import torchvision.transforms as T
 import argparse
+import fnmatch
 from PIL import Image
 import yaml
 from tqdm import tqdm
@@ -190,8 +191,8 @@ class TokenFlow(nn.Module):
             frames = [frame.resize((512, 512), resample=Image.Resampling.LANCZOS) for frame in frames]
         frames = torch.stack([T.ToTensor()(frame) for frame in frames]).to(torch.float16).to(self.device)
         save_video(frames, f'{self.config["output_path"]}/input_fps10.mp4', fps=10, img_size=self.ori_wh)
-        save_video(frames, f'{self.config["output_path"]}/input_fps20.mp4', fps=20, img_size=self.ori_wh)
-        save_video(frames, f'{self.config["output_path"]}/input_fps30.mp4', fps=30, img_size=self.ori_wh)
+        # save_video(frames, f'{self.config["output_path"]}/input_fps20.mp4', fps=20, img_size=self.ori_wh)
+        # save_video(frames, f'{self.config["output_path"]}/input_fps30.mp4', fps=30, img_size=self.ori_wh)
         # encode to latents
         latents = self.encode_imgs(frames, deterministic=True).to(torch.float16).to(self.device)
         # get noise
@@ -259,8 +260,8 @@ class TokenFlow(nn.Module):
         for i in range(len(decoded)):
             T.ToPILImage()(decoded[i]).save(f'{self.config["output_path"]}/vae_recon/%05d.png' % i)
         save_video(decoded, f'{self.config["output_path"]}/vae_recon_10.mp4', fps=10, img_size=self.ori_wh)
-        save_video(decoded, f'{self.config["output_path"]}/vae_recon_20.mp4', fps=20, img_size=self.ori_wh)
-        save_video(decoded, f'{self.config["output_path"]}/vae_recon_30.mp4', fps=30, img_size=self.ori_wh)
+        # save_video(decoded, f'{self.config["output_path"]}/vae_recon_20.mp4', fps=20, img_size=self.ori_wh)
+        # save_video(decoded, f'{self.config["output_path"]}/vae_recon_30.mp4', fps=30, img_size=self.ori_wh)
 
     def edit_video(self):
         save_dir = f'{self.config["output_path"]}/img_ode'
@@ -276,8 +277,8 @@ class TokenFlow(nn.Module):
         noisy_latents = self.scheduler.add_noise(self.latents, self.eps, self.scheduler.timesteps[0])
         edited_frames = self.sample_loop(noisy_latents, torch.arange(self.config["n_frames"]))
         save_video(edited_frames, f'{self.config["output_path"]}/tokenflow_PnP_fps_10.mp4', img_size=self.ori_wh)
-        save_video(edited_frames, f'{self.config["output_path"]}/tokenflow_PnP_fps_20.mp4', fps=20, img_size=self.ori_wh)
-        save_video(edited_frames, f'{self.config["output_path"]}/tokenflow_PnP_fps_30.mp4', fps=30, img_size=self.ori_wh)
+        # save_video(edited_frames, f'{self.config["output_path"]}/tokenflow_PnP_fps_20.mp4', fps=20, img_size=self.ori_wh)
+        # save_video(edited_frames, f'{self.config["output_path"]}/tokenflow_PnP_fps_30.mp4', fps=30, img_size=self.ori_wh)
         print('Done!')
 
     def sample_loop(self, x, indices):
@@ -299,6 +300,14 @@ def run(config):
     editor = TokenFlow(config)
     editor.edit_video()
 
+def list_images(directory):
+    image_extensions = ('*.png', '*.jpg', '*.jpeg')  # '*.gif', '*.bmp', '*.tiff', '*.webp')
+
+    images = []
+    for ext in image_extensions:
+        images.extend(fnmatch.filter(os.listdir(directory), ext))
+    return images
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -307,6 +316,7 @@ if __name__ == '__main__':
     parser.add_argument('--n_frames', type=int, default=40)
     parser.add_argument('--data_dir', type=str, default='data/') 
     parser.add_argument('--data_resize_dir', type=str, default='data/') 
+    parser.add_argument('--output_dir', type=str, default='outputs/') 
     parser.add_argument("--dataset_json", type=str, default=None, help="configs/dataset.json")
     opt = parser.parse_args()
 
@@ -314,8 +324,8 @@ if __name__ == '__main__':
         config = yaml.safe_load(f)
     config["n_frames"] = opt.n_frames
 
-    output_dir = config["output_path"]
     if opt.dataset_json is None:
+        output_dir = config["output_path"]
         config["output_path"] = os.path.join(output_dir + f'_pnp_SD_{config["sd_version"]}',
                                             Path(config["data_path"]).stem,
                                             config["tgt_name"]
@@ -331,22 +341,35 @@ if __name__ == '__main__':
         run(config)
 
     else:
+        output_dir = opt.output_dir
+
         with open(opt.dataset_json, 'r') as json_file:
             data = json.load(json_file)
+
+        type_idx = opt.dataset_json.split('/')[-1].split('_')[0].replace("edit", "")
         
         num_videos = len(data)
         for vid, entry in enumerate(data):
+            video_name = entry["video_name"]
+            print(f"Edited type {type_idx}, Processing {vid}/{num_videos} video: {video_name} ...")
+
             config["data_path"] = os.path.join(opt.data_resize_dir, entry["video_name"])
             config["ori_data_pth"] = os.path.join(opt.data_dir, entry["video_name"])
             config["tgt_name"] = entry["target_prompt"]
             config["prompt"] = entry["target_prompt"]
             config["negative_prompt"] = entry["negative_prompt"]
 
+            
             config["output_path"] = os.path.join(
                 output_dir + f'_pnp_SD_{config["sd_version"]}',
                 Path(config["data_path"]).stem,
-                config["tgt_name"]
+                type_idx + '_' + entry["target_prompt"][:20]
             )
+            if os.path.exists(os.path.join(config["output_path"], "tokenflow_PnP_fps_10.mp4")):
+                print(f"Video existed! Skip {config['output_path']}")
+                continue
+
+            config["n_frames"] = min(len(list_images(config["data_path"])), config["n_frames"])
 
             os.makedirs(config["output_path"], exist_ok=True)
             assert os.path.exists(config["data_path"]), f'Data path {config["data_path"]} does not exist'

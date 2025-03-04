@@ -397,6 +397,7 @@ if __name__ == "__main__":
     parser.add_argument('--inversion_prompt', type=str, default='a woman running')
     # FiVE dataset
     parser.add_argument("--dataset_json", type=str, default=None, help="configs/dataset.json")
+    parser.add_argument("--start_index", type=int, default=0)
     opt = parser.parse_args()
 
     if opt.dataset_json is None:
@@ -414,7 +415,7 @@ if __name__ == "__main__":
 
         num_videos = len(data)
         data_dir = opt.data_dir
-        for vid, entry in enumerate(data):
+        for vid, entry in enumerate(data[opt.start_index:]):
             if entry['video_name'] in processed_video_names:
                 continue 
 
@@ -423,6 +424,18 @@ if __name__ == "__main__":
             video_path = os.path.join(opt.data_dir, entry['video_name'])
 
             save_video_frames(video_path, img_size=(opt.W, opt.H))
+            processed_video_names.append(entry['video_name'])
+        
+        processed_video_names = []
+
+        opt.data_dir = opt.data_dir + '_resize'
+        for vid, entry in enumerate(data):
+            if entry['video_name'] in processed_video_names:
+                continue 
+
+            print(f"Processing {vid}/{num_videos} video: {entry['video_name']} ...")
+
+            video_path = os.path.join(opt.data_dir, entry['video_name'])
             opt.data_path = os.path.join(opt.data_dir, Path(video_path).stem)
             opt.inversion_prompt = entry['source_prompt']
 

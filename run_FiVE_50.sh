@@ -1,7 +1,8 @@
 # FiVE 
-CUDA_VISIBLE_DEVICES=0 python preprocess.py \
+CUDA_VISIBLE_DEVICES=2 python preprocess.py \
     --data_dir data_FiVE \
-    --dataset_json data_FiVE/edit_prompt/edit1_FiVE.json 
+    --dataset_json data_FiVE/edit_prompt/edit1_FiVE.json \
+    --start_index 50
 
 # # # sampling or editing videos
 # CUDA_VISIBLE_DEVICES=2 python run_tokenflow_pnp.py \

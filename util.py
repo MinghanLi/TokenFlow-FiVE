@@ -19,6 +19,9 @@ import cv2
 def save_video_frames(video_path, img_size=(512,512)):
     video_dir = video_path.split('/')[0]
     video_path_resize = '/'.join([video_dir+'_resize'] + video_path.split('/')[1:])
+    if os.path.exists(video_path_resize):
+        print(f"Video existed! Skiping {video_path_resize}")
+        return 
     Path(video_path_resize).mkdir(parents=True, exist_ok=True)
 
     if os.path.isdir(video_path):
