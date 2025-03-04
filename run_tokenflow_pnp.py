@@ -181,7 +181,10 @@ class TokenFlow(nn.Module):
             os.path.join(config["data_path"], filename) 
             for filename in sorted(os.listdir(config["data_path"]))
         ]
-        frames = [Image.open(paths[idx]).convert('RGB') for idx in range(self.config["n_frames"])]
+        frames = [
+            Image.open(paths[idx]).convert('RGB') 
+            for idx in range(self.config["n_frames"]) if idx < len(paths)
+        ]
         assert len(frames), f"No image in {config['data_path']}"
         if frames[0].size[0] == frames[0].size[1]:
             frames = [frame.resize((512, 512), resample=Image.Resampling.LANCZOS) for frame in frames]
@@ -260,6 +263,11 @@ class TokenFlow(nn.Module):
         save_video(decoded, f'{self.config["output_path"]}/vae_recon_30.mp4', fps=30, img_size=self.ori_wh)
 
     def edit_video(self):
+        save_dir = f'{self.config["output_path"]}/img_ode'
+        if os.path.exists(save_dir):
+            print(f"This video has been processed! Skip {save_dir} ... ")
+            return 
+
         os.makedirs(f'{self.config["output_path"]}/img_ode', exist_ok=True)
         self.save_vae_recon()
         pnp_f_t = int(self.config["n_timesteps"] * self.config["pnp_f_t"])
