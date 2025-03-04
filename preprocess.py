@@ -416,8 +416,9 @@ if __name__ == "__main__":
             print(f"Processing {vid}/{num_videos} video: {entry['video_name']} ...")
 
             video_path = os.path.join(opt.data_dir, entry['video_name'])
+
             save_video_frames(video_path, img_size=(opt.W, opt.H))
-            opt.data_path = os.path.join('data', Path(video_path).stem)
+            opt.data_path = os.path.join(opt.data_dir, Path(video_path).stem)
             opt.inversion_prompt = entry['source_prompt']
 
             prep(opt)

@@ -17,28 +17,31 @@ import cv2
 
 
 def save_video_frames(video_path, img_size=(512,512)):
+    video_dir = video_path.split('/')[0]
+    video_path_resize = '/'.join([video_dir+'_resize'] + video_path.split('/')[1:])
+    Path(video_path_resize).mkdir(parents=True, exist_ok=True)
+
     if os.path.isdir(video_path):
-        video_name = video_path.split('/')[-1]
-        Path(f'data/{video_name}').mkdir(exist_ok=True)
         for filename in os.listdir(video_path):
             if not (filename.endswith('.jpg') or filename.endswith('.png')):
                 continue
 
             image = Image.open(os.path.join(video_path, filename))
             image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
-            image_resized.save(f'data/{video_name}/{filename}')
+            image_resized.save(f'{video_path_resize}/{filename}')
+       
     else:
         video, _, _ = read_video(video_path, output_format="TCHW")
         # rotate video -90 degree if video is .mov format. this is a weird bug in torchvision
         if video_path.endswith('.mov'):
             video = T.functional.rotate(video, -90)
         video_name = Path(video_path).stem
-        os.makedirs(f'data/{video_name}', exist_ok=True)
+        
         for i in range(len(video)):
             ind = str(i).zfill(5)
             image = T.ToPILImage()(video[i])
             image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
-            image_resized.save(f'data/{video_name}/{ind}.png')
+            image_resized.save(f'{video_path_resize}/{ind}.png')
 
 def add_dict_to_yaml_file(file_path, key, value):
     data = {}

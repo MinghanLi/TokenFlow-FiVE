@@ -182,6 +182,7 @@ class TokenFlow(nn.Module):
             for filename in sorted(os.listdir(config["data_path"]))
         ]
         frames = [Image.open(paths[idx]).convert('RGB') for idx in range(self.config["n_frames"])]
+        assert len(frames), f"No image in {config['data_path']}"
         if frames[0].size[0] == frames[0].size[1]:
             frames = [frame.resize((512, 512), resample=Image.Resampling.LANCZOS) for frame in frames]
         frames = torch.stack([T.ToTensor()(frame) for frame in frames]).to(torch.float16).to(self.device)
@@ -297,6 +298,7 @@ if __name__ == '__main__':
     # FiVE dataset
     parser.add_argument('--n_frames', type=int, default=40)
     parser.add_argument('--data_dir', type=str, default='data/') 
+    parser.add_argument('--data_resize_dir', type=str, default='data/') 
     parser.add_argument("--dataset_json", type=str, default=None, help="configs/dataset.json")
     opt = parser.parse_args()
 
@@ -326,9 +328,10 @@ if __name__ == '__main__':
         
         num_videos = len(data)
         for vid, entry in enumerate(data):
-            config["data_path"] = os.path.join(opt.data_dir, entry["video_name"])
-            config["tgt_name"] = entry(["target_prompt"])
-            config["prompt"] = entry(["target_prompt"])
+            config["data_path"] = os.path.join(opt.data_resize_dir, entry["video_name"])
+            config["ori_data_pth"] = os.path.join(opt.data_dir, entry["video_name"])
+            config["tgt_name"] = entry["target_prompt"]
+            config["prompt"] = entry["target_prompt"]
             config["negative_prompt"] = entry["negative_prompt"]
 
             config["output_path"] = os.path.join(
@@ -338,7 +341,7 @@ if __name__ == '__main__':
             )
 
             os.makedirs(config["output_path"], exist_ok=True)
-            assert os.path.exists(config["data_path"]), "Data path does not exist"
+            assert os.path.exists(config["data_path"]), f'Data path {config["data_path"]} does not exist'
             with open(os.path.join(config["output_path"], "config.yaml"), "w") as f:
                 yaml.dump(config, f)
             run(config)
