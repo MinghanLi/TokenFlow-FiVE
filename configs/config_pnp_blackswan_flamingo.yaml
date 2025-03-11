@@ -2,11 +2,11 @@
 seed: 1
 device: 'cuda'
 output_path: 'tokenflow-results'
-tgt_name: 'car'
+tgt_name: 'flamingo'
 
 # data
-ori_data_pth: "data/bus"  # bfe resize
-data_path: 'samples/davis/bus'
+ori_data_pth: "samples/davis/blackswan"  # bfe resize
+data_path: "samples/davis/blackswan" # 'data/blackswan'
 latents_path: 'latents' # should be the same as 'save_dir' arg used in preprocess
 n_inversion_steps: 500 # for retrieving the latents of the inversion
 n_frames: 40
@@ -15,7 +15,7 @@ n_frames: 40
 sd_version: '2.1'
 guidance_scale: 7.5
 n_timesteps: 50
-prompt: "A car moving on the road." 
+prompt: "A pink flamingo swimming in the river." 
 negative_prompt: "ugly, blurry, low res, unrealistic, unaesthetic"
 batch_size: 8
 

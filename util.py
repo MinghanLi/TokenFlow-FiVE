@@ -16,13 +16,10 @@ from kornia.utils.grid import create_meshgrid
 import cv2
 
 
-def save_video_frames(video_path, img_size=(512,512)):
-    video_dir = video_path.split('/')[0]
-    video_path_resize = '/'.join([video_dir+'_resize'] + video_path.split('/')[1:])
-    if os.path.exists(video_path_resize):
-        print(f"Video existed! Skiping {video_path_resize}")
-        return 
-    Path(video_path_resize).mkdir(parents=True, exist_ok=True)
+def save_video_frames(video_path, img_size=(512,512), video_path_resize=None):
+    if video_path_resize is None:
+        video_dir = video_path.split('/')[0]
+        video_path_resize = '/'.join([video_dir+'_resize'] + video_path.split('/')[1:])
 
     if os.path.isdir(video_path):
         for filename in os.listdir(video_path):
@@ -30,8 +27,18 @@ def save_video_frames(video_path, img_size=(512,512)):
                 continue
 
             image = Image.open(os.path.join(video_path, filename))
-            image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
-            image_resized.save(f'{video_path_resize}/{filename}')
+            # non-squre videos using 672 x 384 or 384 x 672
+            # square videos using 512 x 512
+            if image.size[0] == image.size[1]:
+                img_size = (512, 512)
+                image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
+                Path(video_path_resize).mkdir(parents=True, exist_ok=True)
+                image_resized.save(f'{video_path_resize}/{filename}')
+                # the original resolution is the best on FiVE benchmark
+                # elif image.size[0] > image.size[1]:
+                #     img_size = (672, 384)
+                # else:
+                #     img_size = (384, 672)
        
     else:
         video, _, _ = read_video(video_path, output_format="TCHW")
@@ -43,8 +50,13 @@ def save_video_frames(video_path, img_size=(512,512)):
         for i in range(len(video)):
             ind = str(i).zfill(5)
             image = T.ToPILImage()(video[i])
-            image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
-            image_resized.save(f'{video_path_resize}/{ind}.png')
+            
+            if image.size[0] == image.size[1]:
+                img_size = (512, 512)
+                image_resized = image.resize((img_size),  resample=Image.Resampling.LANCZOS)
+                Path(video_path_resize).mkdir(parents=True, exist_ok=True)
+                image_resized.save(f'{video_path_resize}/{ind}.png')
+            # else: # the original resolution is the best on FiVE benchmark
 
 def add_dict_to_yaml_file(file_path, key, value):
     data = {}

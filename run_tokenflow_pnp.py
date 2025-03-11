@@ -121,7 +121,7 @@ class TokenFlow(nn.Module):
 
     def get_latents_path(self):
         latents_path = os.path.join(config["latents_path"], f'sd_{config["sd_version"]}',
-                             Path(config["data_path"]).stem, f'steps_{config["n_inversion_steps"]}')
+                                    Path(config["data_path"]).stem, f'steps_{config["n_inversion_steps"]}')
         latents_path = [x for x in glob.glob(f'{latents_path}/*') if '.' not in Path(x).name]
         n_frames = [int([x for x in latents_path[i].split('/') if 'nframes' in x][0].split('_')[1]) for i in range(len(latents_path))]
         latents_path = latents_path[np.argmax(n_frames)]
@@ -129,7 +129,8 @@ class TokenFlow(nn.Module):
         if self.config["n_frames"] % self.config["batch_size"] != 0:
             # make n_frames divisible by batch_size
             self.config["n_frames"] = self.config["n_frames"] - (self.config["n_frames"] % self.config["batch_size"])
-        print("Number of frames: ", self.config["n_frames"])
+        print("Number of inversion frames: ", self.config["n_frames"], "path:", os.path.join(latents_path, 'latents'))
+        
         return os.path.join(latents_path, 'latents')
 
     @torch.no_grad()
@@ -206,6 +207,7 @@ class TokenFlow(nn.Module):
         noisy_latent = torch.load(latents_path)[indices].to(self.device)
         alpha_prod_T = self.scheduler.alphas_cumprod[noisest]
         mu_T, sigma_T = alpha_prod_T ** 0.5, (1 - alpha_prod_T) ** 0.5
+        
         eps = (noisy_latent - mu_T * latent) / sigma_T
         return eps
 
@@ -266,9 +268,6 @@ class TokenFlow(nn.Module):
 
     def edit_video(self):
         save_dir = f'{self.config["output_path"]}/img_ode'
-        if os.path.exists(save_dir):
-            print(f"This video has been processed! Skip {save_dir} ... ")
-            return 
 
         os.makedirs(f'{self.config["output_path"]}/img_ode', exist_ok=True)
         self.save_vae_recon()
@@ -316,15 +315,18 @@ if __name__ == '__main__':
     # FiVE dataset
     parser.add_argument('--n_frames', type=int, default=40)
     parser.add_argument('--data_dir', type=str, default='data/') 
-    parser.add_argument('--data_resize_dir', type=str, default='data/') 
+    parser.add_argument('--data_resize_dir', type=str, default=None) 
     parser.add_argument('--output_dir', type=str, default='outputs/') 
     parser.add_argument("--dataset_json", type=str, default=None, help="configs/dataset.json")
+    parser.add_argument("--eval_memory_time", action="store_true", help="Enable evaluation of memory time.")
     opt = parser.parse_args()
+    if opt.data_resize_dir is None:
+        opt.data_resize_dir = opt.data_dir + '_resize'
 
     with open(opt.config_path, "r") as f:
         config = yaml.safe_load(f)
     config["n_frames"] = opt.n_frames
-
+    
     if opt.dataset_json is None:
         output_dir = config["output_path"]
         config["output_path"] = os.path.join(output_dir + f'_pnp_SD_{config["sd_version"]}',
@@ -336,7 +338,8 @@ if __name__ == '__main__':
                                                 #  str(config["n_timesteps"]
                                             )
         os.makedirs(config["output_path"], exist_ok=True)
-        assert os.path.exists(config["data_path"]), "Data path does not exist"
+
+        assert os.path.exists(config["data_path"]), f"Data path {config['data_path']} does not exist"
         with open(os.path.join(config["output_path"], "config.yaml"), "w") as f:
             yaml.dump(config, f)
         run(config)
@@ -347,11 +350,22 @@ if __name__ == '__main__':
         with open(opt.dataset_json, 'r') as json_file:
             data = json.load(json_file)
 
+        # GPU/Speed
+        import psutil, time
+        if opt.eval_memory_time:
+            data = data[:1]
+        process = psutil.Process(os.getpid())
+        initial_memory = process.memory_info().rss / (1024 ** 2)  
+        start_time = time.time()
+
         type_idx = opt.dataset_json.split('/')[-1].split('_')[0].replace("edit", "")
         
         num_videos = len(data)
         for vid, entry in enumerate(data):
             video_name = entry["video_name"]
+            # if not video_name.startswith("0011"):
+            #     continue
+
             print(f"Edited type {type_idx}, Processing {vid}/{num_videos} video: {video_name} ...")
 
             config["data_path"] = os.path.join(opt.data_resize_dir, entry["video_name"])
@@ -366,9 +380,12 @@ if __name__ == '__main__':
                 Path(config["data_path"]).stem,
                 type_idx + '_' + entry["target_prompt"][:20]
             )
-            if os.path.exists(os.path.join(config["output_path"], "tokenflow_PnP_fps_10.mp4")):
-                print(f"Video existed! Skip {config['output_path']}")
-                continue
+            # if os.path.exists(f'{config["output_path"]}/img_ode'):
+            #     print(f"This video has been processed! Skip {config['output_path']}/img_ode ... ")
+            #     continue
+            # if not opt.eval_memory_time and os.path.exists(os.path.join(config["output_path"], "tokenflow_PnP_fps_10.mp4")):
+            #     print(f"Video existed! Skip {config['output_path']}")
+            #     continue
 
             config["n_frames"] = min(len(list_images(config["data_path"])), config["n_frames"])
 
@@ -378,3 +395,22 @@ if __name__ == '__main__':
                 yaml.dump(config, f)
 
             run(config)
+
+
+        # save GPU Memory / Speed
+        running_time = time.time() - start_time
+        max_cpu_memory = process.memory_info().rss / (1024 ** 2)  # to MB
+
+        if torch.cuda.is_available():
+            peak_gpu_memory = torch.cuda.max_memory_allocated(device="cuda") / (1024 ** 2)  # to MB
+        else:
+            peak_gpu_memory = 0.0  
+
+        with open("/PHShome/ml1833/code/VRF-inversion-flux/outputs_FiVE/memory_stats.txt", "a") as f:
+            f.write(f"1_TokenFlow: sample Max CPU Memory Usage: {max_cpu_memory:.2f} MB\n")
+            f.write(f"1_TokenFlow: sample Peak GPU Memory Usage: {peak_gpu_memory:.2f} MB\n")
+            f.write(f"1_TokenFlow: sample Running Time: {running_time:.2f} seconds\n\n")
+
+        print(f"Max CPU Memory Usage: {max_cpu_memory:.2f} MB")
+        print(f"Peak GPU Memory Usage: {peak_gpu_memory:.2f} MB")
+        print(f"Running Time: {running_time:.2f} seconds")

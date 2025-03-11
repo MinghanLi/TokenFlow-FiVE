@@ -320,7 +320,7 @@ class Preprocess(nn.Module):
         return rgb_reconstruction
 
 
-def prep(opt):
+def prep(opt, is_FiVE=False):
     # timesteps to save
     if opt.sd_version == '2.1':
         model_key = "stabilityai/stable-diffusion-2-1-base"
@@ -349,7 +349,7 @@ def prep(opt):
                              f'steps_{opt.steps}',
                              f'nframes_{opt.n_frames}') 
 
-    if os.path.exists(save_path):
+    if is_FiVE and not opt.eval_memory_time and os.path.exists(save_path):
         print(f"This video has been processed! Skip {save_path} ... ")
         return 
 
@@ -398,37 +398,42 @@ if __name__ == "__main__":
     # FiVE dataset
     parser.add_argument("--dataset_json", type=str, default=None, help="configs/dataset.json")
     parser.add_argument("--start_index", type=int, default=0)
+    parser.add_argument("--eval_memory_time", action="store_true", help="Enable evaluation of memory time.")
     opt = parser.parse_args()
 
     if opt.dataset_json is None:
         video_path = opt.data_path
+        # only extract frames from mp4 video
         save_video_frames(video_path, img_size=(opt.W, opt.H))
-        opt.data_path = os.path.join('data', Path(video_path).stem)
-
+        
         prep(opt)
     
     else:
         with open(opt.dataset_json, 'r') as json_file:
             data = json.load(json_file)
 
+        data = data[opt.start_index:]
+        
+        # GPU/Speed
+        import psutil, time
+        if opt.eval_memory_time:
+            data = data[:1]
+        process = psutil.Process(os.getpid())
+        initial_memory = process.memory_info().rss / (1024 ** 2)  
+        start_time = time.time()
+
         processed_video_names = []
 
         num_videos = len(data)
         data_dir = opt.data_dir
-        for vid, entry in enumerate(data[opt.start_index:]):
-            if entry['video_name'] in processed_video_names:
-                continue 
-
-            print(f"Processing {vid}/{num_videos} video: {entry['video_name']} ...")
-
-            video_path = os.path.join(opt.data_dir, entry['video_name'])
-
+        for vid, entry in enumerate(data):
+            video_path = os.path.join(data_dir, entry['video_name'])            
+            # only extract frames from mp4 video
             save_video_frames(video_path, img_size=(opt.W, opt.H))
             processed_video_names.append(entry['video_name'])
         
         processed_video_names = []
 
-        opt.data_dir = opt.data_dir + '_resize'
         for vid, entry in enumerate(data):
             if entry['video_name'] in processed_video_names:
                 continue 
@@ -439,6 +444,25 @@ if __name__ == "__main__":
             opt.data_path = os.path.join(opt.data_dir, Path(video_path).stem)
             opt.inversion_prompt = entry['source_prompt']
 
-            prep(opt)
+            prep(opt, is_FiVE=True)
 
             processed_video_names.append(entry['video_name'])
+
+
+        # save GPU Memory / Speed
+        running_time = time.time() - start_time
+        max_cpu_memory = process.memory_info().rss / (1024 ** 2)  # to MB
+
+        if torch.cuda.is_available():
+            peak_gpu_memory = torch.cuda.max_memory_allocated(device="cuda") / (1024 ** 2)  # to MB
+        else:
+            peak_gpu_memory = 0.0  
+
+        with open("/PHShome/ml1833/code/VRF-inversion-flux/outputs_FiVE/memory_stats.txt", "a") as f:
+            f.write(f"1_TokenFlow: inv Max CPU Memory Usage: {max_cpu_memory:.2f} MB\n")
+            f.write(f"1_TokenFlow: inv  Peak GPU Memory Usage: {peak_gpu_memory:.2f} MB\n")
+            f.write(f"1_TokenFlow: inv  Running Time: {running_time:.2f} seconds\n\n")
+
+        print(f"Max CPU Memory Usage: {max_cpu_memory:.2f} MB")
+        print(f"Peak GPU Memory Usage: {peak_gpu_memory:.2f} MB")
+        print(f"Running Time: {running_time:.2f} seconds")
