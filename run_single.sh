@@ -21,9 +21,11 @@
 # python run_tokenflow_pnp.py --config_path configs/config_pnp_wolf_fox.yaml
 
 # # Wolf --> bear
-python preprocess.py --data_path data/bear
-python run_tokenflow_pnp.py --config_path configs/config_pnp_wolf_bear.yaml
+# python preprocess.py --data_path data/bear
+# python run_tokenflow_pnp.py --config_path configs/config_pnp_wolf_bear.yaml
 
 # Black dress --> Red dress
 # python preprocess.py --data_path data/0011_lucia
+python run_tokenflow_pnp.py --config_path configs/config_pnp_0011_lucia_man.yaml
+python run_tokenflow_pnp.py --config_path configs/config_pnp_0011_lucia_lion.yaml
 # python run_tokenflow_pnp.py --config_path configs/config_pnp_0011_lucia_red.yaml

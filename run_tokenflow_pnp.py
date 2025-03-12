@@ -120,10 +120,12 @@ class TokenFlow(nn.Module):
         return inv_prompt
 
     def get_latents_path(self):
-        latents_path = os.path.join(config["latents_path"], f'sd_{config["sd_version"]}',
+        latents_path_ = os.path.join(config["latents_path"], f'sd_{config["sd_version"]}',
                                     Path(config["data_path"]).stem, f'steps_{config["n_inversion_steps"]}')
-        latents_path = [x for x in glob.glob(f'{latents_path}/*') if '.' not in Path(x).name]
+        latents_path = [x for x in glob.glob(f'{latents_path_}/*') if '.' not in Path(x).name]
         n_frames = [int([x for x in latents_path[i].split('/') if 'nframes' in x][0].split('_')[1]) for i in range(len(latents_path))]
+        assert len(n_frames) > 0, f"No ddim latents in the path: {latents_path_}"
+
         latents_path = latents_path[np.argmax(n_frames)]
         self.config["n_frames"] = min(max(n_frames), config["n_frames"])
         if self.config["n_frames"] % self.config["batch_size"] != 0:
@@ -322,12 +324,12 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     if opt.data_resize_dir is None:
         opt.data_resize_dir = opt.data_dir + '_resize'
-
-    with open(opt.config_path, "r") as f:
-        config = yaml.safe_load(f)
-    config["n_frames"] = opt.n_frames
     
     if opt.dataset_json is None:
+        with open(opt.config_path, "r") as f:
+            config = yaml.safe_load(f)
+        config["n_frames"] = opt.n_frames
+
         output_dir = config["output_path"]
         config["output_path"] = os.path.join(output_dir + f'_pnp_SD_{config["sd_version"]}',
                                             Path(config["data_path"]).stem,
@@ -362,6 +364,10 @@ if __name__ == '__main__':
         
         num_videos = len(data)
         for vid, entry in enumerate(data):
+            with open(opt.config_path, "r") as f:
+                config = yaml.safe_load(f)
+            config["n_frames"] = opt.n_frames
+
             video_name = entry["video_name"]
             # if not video_name.startswith("0011"):
             #     continue
@@ -381,11 +387,12 @@ if __name__ == '__main__':
                 type_idx + '_' + entry["target_prompt"][:20]
             )
             # if os.path.exists(f'{config["output_path"]}/img_ode'):
-            #     print(f"This video has been processed! Skip {config['output_path']}/img_ode ... ")
-            #     continue
-            # if not opt.eval_memory_time and os.path.exists(os.path.join(config["output_path"], "tokenflow_PnP_fps_10.mp4")):
-            #     print(f"Video existed! Skip {config['output_path']}")
-            #     continue
+            #    if len(os.listdir(f'{config["output_path"]}/img_ode')):
+                #     print(f"This video has been processed! Skip {config['output_path']}/img_ode ... ")
+                #     continue
+            if not opt.eval_memory_time and os.path.exists(os.path.join(config["output_path"], "tokenflow_PnP_fps_10.mp4")):
+                print(f"Video existed! Skip {config['output_path']}")
+                continue
 
             config["n_frames"] = min(len(list_images(config["data_path"])), config["n_frames"])
 

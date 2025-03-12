@@ -1,0 +1,25 @@
+# general
+seed: 1
+device: 'cuda'
+output_path: 'tokenflow-results'
+tgt_name: '0011_lucia_lion'
+
+# data
+ori_data_pth: "data/0011_lucia"  # bfe resize
+# data_path: 'data_resize/0011_lucia'
+data_path: 'samples/FiVE/0011_lucia'
+latents_path: 'latents' # should be the same as 'save_dir' arg used in preprocess
+n_inversion_steps: 500 # for retrieving the latents of the inversion
+n_frames: 40
+
+# diffusion
+sd_version: '2.1'
+guidance_scale: 7.5
+n_timesteps: 50
+prompt: "A lion is walking along a paved path in a lush green park, with trees and a wooden bench in the background. The camera remains fixed, capturing her steady movement." 
+negative_prompt: "ugly, blurry, low res, unrealistic, unaesthetic"
+batch_size: 8
+
+# pnp params -- injection thresholds ∈ [0, 1]
+pnp_attn_t: 0.5
+pnp_f_t: 0.8
